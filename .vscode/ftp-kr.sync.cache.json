@@ -1,0 +1,146 @@
+{
+  "ftp://ftp.andocodeando.net@admin@andocodeando.net": {
+    "movilib": {
+      ".env": {
+        "type": "-",
+        "size": 643,
+        "lmtime": 0,
+        "modified": true
+      },
+      ".git": {},
+      ".gitattributes": {
+        "type": "-",
+        "size": 111,
+        "lmtime": 0,
+        "modified": false
+      },
+      ".gitignore": {
+        "type": "-",
+        "size": 146,
+        "lmtime": 0,
+        "modified": false
+      },
+      ".vscode": {},
+      "app": {
+        "Http": {
+          "Controllers": {
+            "Auth": {},
+            "Controller.php": {
+              "type": "-",
+              "size": 361,
+              "lmtime": 0,
+              "modified": false
+            },
+            "HomeController.php": {
+              "type": "-",
+              "size": 452,
+              "lmtime": 0,
+              "modified": false
+            },
+            "ProductosController.php": {
+              "type": "-",
+              "size": 2762,
+              "lmtime": 0,
+              "modified": false
+            },
+            "PuntoVentaController.php": {
+              "type": "-",
+              "size": 1892,
+              "lmtime": 0,
+              "modified": false
+            },
+            "SurtimientoController.php": {
+              "type": "-",
+              "size": 1927,
+              "lmtime": 1580505676530,
+              "modified": false
+            }
+          }
+        }
+      },
+      "artisan": {
+        "type": "-",
+        "size": 1686,
+        "lmtime": 0,
+        "modified": false
+      },
+      "bootstrap": {},
+      "cgi-bin": {},
+      "composer.json": {
+        "type": "-",
+        "size": 1485,
+        "lmtime": 0,
+        "modified": true
+      },
+      "composer.lock": {
+        "type": "-",
+        "size": 178531,
+        "lmtime": 0,
+        "modified": true
+      },
+      "config": {},
+      "database": {},
+      "package.json": {
+        "type": "-",
+        "size": 1125,
+        "lmtime": 0,
+        "modified": false
+      },
+      "phpunit.xml": {
+        "type": "-",
+        "size": 1040,
+        "lmtime": 0,
+        "modified": false
+      },
+      "public": {},
+      "readme.md": {
+        "type": "-",
+        "size": 3550,
+        "lmtime": 0,
+        "modified": false
+      },
+      "resources": {
+        "views": {
+          "auth": {
+            "login.blade.php": {
+              "type": "-",
+              "size": 1770,
+              "lmtime": 0,
+              "modified": false
+            },
+            "passwords": {},
+            "register.blade.php": {
+              "type": "-",
+              "size": 2675,
+              "lmtime": 1580505817354,
+              "modified": false
+            },
+            "verify.blade.php": {
+              "type": "-",
+              "size": 1134,
+              "lmtime": 0,
+              "modified": false
+            }
+          }
+        }
+      },
+      "routes": {},
+      "server.php": {
+        "type": "-",
+        "size": 563,
+        "lmtime": 0,
+        "modified": false
+      },
+      "storage": {},
+      "tests": {},
+      "vendor": {},
+      "webpack.mix.js": {
+        "type": "-",
+        "size": 549,
+        "lmtime": 0,
+        "modified": false
+      }
+    }
+  },
+  "$version": 1
+}

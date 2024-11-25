@@ -1,0 +1,124 @@
+body {
+    height: 100vh;
+    overflow: hidden;
+}
+
+.card-header>h1,
+.card-header>h2,
+.card-header>h3,
+.card-header>h4,
+.card-header>h5,
+.card-header>h6 {
+    display: inline-block;
+}
+
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+*::-webkit-scrollbar-track {
+    background: #bbb;
+    /* color of the tracking area */
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: #495057;
+    border-radius: 20px;
+}
+
+.notificacion {
+    width: 350px;
+    position: fixed;
+    z-index: 9999999;
+    top: 20px;
+    right: 20px;
+}
+
+#modal-general .modal-body {
+    overflow-x: auto;
+}
+
+.navbar-brand {
+    width: 10%;
+}
+
+.navbar-brand img {
+    max-height: 35px;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+div.dataTables_wrapper div.dataTables_processing {
+    background: #bbb;
+    color: #fff;
+}
+
+#navbarNavDropdown .navbar-nav {
+    justify-content: flex-start;
+    width: 100%;
+}
+
+.navbar-nav .user-menu {
+    justify-self: flex-end;
+    margin-left: auto;
+}
+
+.navbar-nav .user-menu .dropdown-menu {
+    left: -45px;
+}
+
+.panel-overflow {
+    max-height: 50vh;
+    overflow: auto;
+}
+
+table tr ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.modal {
+    overflow: auto;
+}
+
+/*lg*/
+@media (max-width: 992px) {
+    .navbar-brand {
+        width: 18%;
+        margin: 0 auto;
+    }
+
+    .table-responsive {
+        margin-bottom: 100px;
+    }
+
+    body.lov {
+        overflow: auto;
+        height: auto;
+    }
+
+    .dataTables_info {
+        white-space: break-spaces !important;
+    }
+}
+
+/*md*/
+@media (max-width: 768px) {}
+
+/*sm*/
+@media (max-width: 576px) {
+    .navbar-brand {
+        width: 32%;
+    }
+
+    .cuenta .item {
+        font-size: 0.8em;
+    }
+
+    #table_paginate .pagination {
+        justify-content: flex-start;
+    }
+}

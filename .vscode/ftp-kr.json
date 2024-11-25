@@ -1,0 +1,16 @@
+{
+    "host": "ftp.andocodeando.net",
+    "username": "admin@andocodeando.net",
+    "password": "19195Giovanni.,",
+    "remotePath": "movilib",
+    "protocol": "ftp",
+    "port": 0,
+    "fileNameEncoding": "utf8",
+    "autoUpload": false,
+    "autoDelete": false,
+    "autoDownload": false,
+    "ignore": [
+        ".git",
+        "/.vscode"
+    ]
+}
