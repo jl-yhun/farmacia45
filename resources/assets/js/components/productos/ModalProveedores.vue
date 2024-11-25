@@ -13,7 +13,7 @@ const emit = defineEmits(['onClose', 'onAdded', 'onDeleted'])
 const state = reactive({
     producto_id: props.producto?.id,
     proveedor_id: '',
-    codigo: '',
+    codigo: props.producto?.codigo_barras,
     precio: '',
     default: 0,
     disponible: 1
@@ -200,7 +200,7 @@ const fillState = (item) => {
                                     </div>
                                     <div class="mt-3 mt-sm-0 ml-0 ml-sm-1 w-100">
                                         <label for="codigo">Código</label>
-                                        <TextInput cy="txt-codigo" id="codigo" v-model="state.codigo">
+                                        <TextInput cy="txt-codigo" id="codigo" v-model="state.codigo" :val="producto?.codigo_barras" readonly="readonly">
                                         </TextInput>
                                     </div>
                                 </div>
