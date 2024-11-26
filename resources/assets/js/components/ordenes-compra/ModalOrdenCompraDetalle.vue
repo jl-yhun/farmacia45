@@ -14,8 +14,10 @@ onMounted(() => {
 
 
 const state = reactive({
-    orden: {},
-    shownDetalle: false
+  orden: {},
+  recibidor_name: null,
+  aplicador_name: null,
+  showDetalle: false
 })
 
 const editable = computed(() => state.orden?.estado == 'Pendiente')
@@ -27,16 +29,26 @@ const alert = reactive({
 })
 
 const fetchOrdenCompra = async () => {
-    try {
-        const result = await axios.get(`${endpoint}/${props.ordenCompraId}`)
-        if (result.data.estado)
-            state.orden = result.data.data
-        else
-            showAlert('Error al obtener el detalle de la orden de compra.', 'danger')
-    } catch (error) {
-        showAlert('Error al obtener el detalle de la orden de compra.', 'danger')
+  try {
+    const result = await axios.get(`${endpoint}/${props.ordenCompraId}`);
+
+    if (result.data.estado) {
+      state.orden = result.data.data;
+      if (!state.orden.recibidor || state.orden.recibidor.id == null) {
+        state.recibidor_name = 'Pendiente';
+      } else
+        state.recibidor_name = result.data.data.recibidor.name.toUpperCase()
+      if (!state.orden.aplicador || state.orden.aplicador.id == null) {
+        state.aplicador_name = 'Pendiente';
+      } else
+        state.aplicador_name = result.data.data.aplicador.name.toUpperCase()
+    } else {
+      showAlert('Error al obtener el detalle de la orden de compra.', 'danger');
     }
-}
+  } catch (error) {
+    showAlert('Error al obtener el detalle de la orden de compra.', 'danger');
+  }
+};
 
 const showAlert = (text, type = 'success') => {
     alert.shown = true
@@ -107,6 +119,10 @@ const removeItem = async (producto) => {
                         </button>
                     </div>
                     <div class="modal-body">
+                      <label for="">Recibido por:</label>
+                      <input type="text" class="form-control" v-model="state.recibidor_name" readonly="readonly">
+                      <label for="">Aplicado por:</label>
+                      <input type="text" class="form-control" v-model="state.aplicador_name" readonly="readonly">
                         <table class="tabla-items-detalle table">
                             <thead>
                                 <tr>

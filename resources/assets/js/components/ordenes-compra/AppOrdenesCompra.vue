@@ -74,27 +74,42 @@ const getList = async () => {
 }
 
 const cambiarEstado = async () => {
-    try {
-        state.processing = true
-        const result = await axios.patch(endpoint + '/' + selectedOc.ocId, {
-            estado: selectedOc.state
-        })
-        if (result.data.estado) {
-            const ocIndex = state.ordenes.findIndex(c => c.id == selectedOc.ocId)
-
-            state.ordenes[ocIndex].estado = selectedOc.state
-
-            resetConfirmState()
-            resetReceiptState()
-        } else {
-            showAlert('Error al cambiar el estado.', 'danger')
-        }
-    } catch (error) {
-        showAlert('Error al cambiar el estado.', 'danger')
-    } finally {
-        state.processing = false
+  try {
+    state.processing = true;
+    const payload = {
+      estado: selectedOc.state,
+    };
+    if (selectedOc.state === 'Recibido') {
+      payload.recibidor_id = state.user.user.id;
+    } else if (selectedOc.state === 'Aplicado') {
+      payload.aplicador_id = state.user.user.id;
+    } else if (selectedOc.state === 'Pedido') {
+      payload.recibidor_id = null;
     }
-}
+    const result = await axios.patch(endpoint + '/' + selectedOc.ocId, payload);
+    if (result.data.estado) {
+      const ocIndex = state.ordenes.findIndex(c => c.id == selectedOc.ocId);
+
+      state.ordenes[ocIndex].estado = selectedOc.state;
+      if (selectedOc.state === 'Recibido') {
+        state.ordenes[ocIndex].recibidor_id = user.id;
+      } else if (selectedOc.state === 'Aplicado') {
+        state.ordenes[ocIndex].aplicador_id = user.id;
+      } else if (selectedOc.state === 'Pedido') {
+        state.ordenes[ocIndex].recibidor_id = null;
+      }
+
+      resetConfirmState();
+      resetReceiptState();
+    } else {
+      showAlert('Error al cambiar el estado.', 'danger');
+    }
+  } catch (error) {
+    showAlert('Error al cambiar el estado.', 'danger');
+  } finally {
+    state.processing = false;
+  }
+};
 
 const showAlert = (text, type = 'success') => {
     alert.shown = true
