@@ -111,6 +111,7 @@ const patchItem = async (producto) => {
                                 <table class="tabla-items table">
                                     <thead>
                                         <tr>
+                                            <th>#</th>
                                             <th>Código</th>
                                             <th>Nombre</th>
                                             <th id="step-1">Cantidad</th>
@@ -119,7 +120,8 @@ const patchItem = async (producto) => {
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr class="pointer" v-for="producto in state.orden?.productos" :key="producto.id">
+                                        <tr class="pointer" v-for="(producto, index) in state.orden?.productos" :key="producto.id">
+                                            <td>{{ index + 1 }}</td>
                                             <td>{{ producto.codigo_barras }}</td>
                                             <td class="flex flex-column">
                                                 <div>
@@ -193,7 +195,7 @@ const patchItem = async (producto) => {
 <style>
 .tabla-items {
     display: grid;
-    grid-template-columns: 1fr 2fr repeat(3, 1fr);
+    grid-template-columns: .5fr 2fr repeat(4, 1fr);
     max-height: 60vh;
     overflow-y: auto;
 }

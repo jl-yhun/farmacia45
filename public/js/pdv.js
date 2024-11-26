@@ -1,1 +1,327 @@
-var busquedaTime,productos=[],descuentos=[],descuento={},total=0,cobrando=!1,recalcularDescuento=function(e){var t=e.find("input[name='total']"),o=JSON.parse(decodeURIComponent(e.find("input[name='producto']").val())),n=e.find("select[name='tipo_descuento']").val(),a=parseFloat(e.find("input[name='descuento_valor']:visible").val()),d=e.find("textarea[name='motivo']").val();a=isNaN(a)?0:a;var c=0,i=(c="monto"==n?parseFloat(o.venta-a).toFixed(2):parseFloat(Math.ceil(o.venta*(1-a/100))).toFixed(2))<parseFloat(o.compra);e.find(".btn-realizar-descuento").attr("disabled",i),i?alerta("No se puede hacer un descuento tan alto<br>Corrija para continuar","warning"):$(".js-generated").fadeOut(),t.val(c),descuento={id:o.id,motivo:d,descuento:a,nuevo:c,tipo:n}},recargarCuenta=function(){$(".cuenta").html(""),$("#busqueda").val("").trigger("focus"),total=0;for(var e=productos.length-1;e>=0;e--){var t=descuentos.find((t=>t.id==productos[e].id)),o="";void 0!==t&&(o="monto"==t.tipo?`<span class='descuento'>\n                            -$${t.descuento}\n                        </span>`:`<span class='descuento'>\n                            -${t.descuento}%\n                        </span>`),$(".cuenta").append(`<div class='row item'><div class='col-1 text-center'><i class='material-icons producto-eliminar' data-id='${productos[e].id}'>close</i></div>\n            <div class='col-md-5 col-11 text-center text-md-left'>${productos[e].nombre}<br>\n                <sub>${productos[e].descripcion}</sub>\n            </div>\n            <div class='col-md-2 col-4 producto-venta' data-id='${productos[e].id}'>\n                $${productos[e].venta}\n                ${o}\n            </div>\n            <div class='col-md-2 col-4 producto-cantidad' data-id='${productos[e].id}'>${productos[e].cantidad}</div>\n            <div class='col-md-2 col-4 text-right'>$${(productos[e].venta*productos[e].cantidad).toFixed(2)}</div>\n            </div><hr>`),total+=parseFloat(productos[e].venta*productos[e].cantidad)}$(".total-cuenta").find("b:nth-child(2)").text("$"+total.toFixed(2)),$(document).off("dblclick").on("dblclick",".producto-cantidad",(function(e){e.preventDefault();var t=$(this).text(),o=$(this).attr("data-id");$(this).text("");var n="<input type='text' class='form-control cantidad-input onlynumbers' value='"+t+"'></input>";$(this).html(n),$(document).off("keypress",".cantidad-input").on("keypress",".cantidad-input",(function(e){if(13==e.which){var t=parseInt($(this).val());if(0==t)return;var n=productos.findIndex((e=>e.id==o));hasStock(productos[n],t)||(t=productos[n].cantidad),productos[n].cantidad=t,recargarCuenta(),$("#busqueda").focus()}}))})),$(document).off("dblclick",".producto-venta").on("dblclick",".producto-venta",(function(e){e.preventDefault();var t=$(this).attr("data-id");abrirModal($("#ruta-descuento").val()+`/${t}`,"GET","md",!1,"",(function(e){var o=descuentos.findIndex((e=>e.id==t));if(e.find("select[name='tipo_descuento']").off("change").on("change",(function(){var t=$(this).val();$(".descuento_tipo").addClass("d-none"),$(`.descuento_${t}`).removeClass("d-none"),recalcularDescuento(e)})),o>=0){var n=descuentos[o];e.find(`select[name='tipo_descuento'] option[value='${n.tipo}']`).attr("selected",!0),e.find("select[name='tipo_descuento']").trigger("change"),e.find("input[name='descuento_valor']").val(n.descuento),e.find("input[name='total']").val(n.nuevo),e.find("textarea[name='motivo']").val(n.motivo)}e.off("keyup","input[name='descuento_valor']").on("keyup","input[name='descuento_valor']",(function(t){recalcularDescuento(e)})),e.find("textarea[name='motivo']").off("change").on("change",(function(t){recalcularDescuento(e)})),e.find(".btn-realizar-descuento").off("click").on("click",(function(n){if(n.preventDefault(),n.stopPropagation(),0!==Object.keys(descuento).length)if(""!=descuento.motivo&&0!=descuento.descuento){o>=0?0==descuento.descuento?descuentos.splice(o,1):descuentos[o]=descuento:descuentos.push(descuento),e.modal("hide");var a=productos.findIndex((e=>e.id==t));productos[a].venta=descuento.nuevo,descuento={},recargarCuenta(),$("#busqueda").focus()}else alerta("Complete el formulario para continuar","danger");else alerta("Complete el formulario para continuar","danger")}))}))})),$(document).off("click",".producto-eliminar").on("click",".producto-eliminar",(function(){var e=$(this).attr("data-id"),t=productos.findIndex((t=>t.id==e));productos.splice(t,1),recargarCuenta()}))};const hasStock=(e,t=0)=>{const o=e.stock-t>=0;return o||alerta("Producto sin stock disponible","danger"),o};$((function(){$("body").on("keydown",(function(e){121==e.which?(e.preventDefault(),$(".btn-cobrar").trigger("click"),cobrando=!0):27==e.which&&$(".js-generated").fadeOut((function(){$(this).remove()}))})),$("#busqueda").on("keydown",(function(t){if(38==t.which||13==t.which){if(t.preventDefault(),""==$(this).val())return;e($(this).val())}})),$("#btnBuscar").on("click",(function(t){t.preventDefault(),e($("#busqueda").val())}));var e=function(e){$.ajax({type:"POST",url:$("#ruta-buscar").val(),data:{busqueda:e},success:function(e){if(isMobile){var o=$("#modal-general");o.find(".modal-content").html("").html(e),o.modal("show"),o.off("hidden.bs.modal").on("hidden.bs.modal",(function(){$("#busqueda").focus()})),o.find(".tabla-productos .producto").on("click",(function(){t(this),o.modal("hide"),$("#busqueda").val("")}))}else $("#resultados tbody").html(e),1==$("#resultados tbody tr").length&&t($("#resultados tbody tr").first()),$("#resultados tbody").find(".producto").on("click",(function(){t(this)}))}})},t=function(e){var t=JSON.parse($(e).attr("data-producto"));t.cantidad=1;var o=productos.findIndex((e=>e.id==t.id));if(-1!=o){if(!hasStock(t,productos[o].cantidad+1))return;productos[o].cantidad+=1}else{if(!hasStock(t,t.cantidad))return;productos.push(t)}recargarCuenta()};$(".btn-cobrar").off("click").on("click",(function(){0!=productos.length?cobrando||(cobrando=!0,abrirModal("/caja/cobro","GET","md",!1,"",(function(e){e.off("hidden.bs.modal").on("hidden.bs.modal",(function(){cobrando=!1})),e.find(".total").text("$"+total.toFixed(2)),e.find("input[name='total']").val(total.toFixed(2));for(var t=0;t<productos.length;t++)e.find("form").append("<input type='hidden' name='productos["+t+"][cantidad]' value='"+productos[t].cantidad+"'>"),e.find("form").append("<input type='hidden' name='productos["+t+"][venta]' value='"+productos[t].venta+"'>"),e.find("form").append("<input type='hidden' name='productos["+t+"][id]' value='"+productos[t].id+"'>");for(t=0;t<descuentos.length;t++)e.find("form").append(`<input type='hidden' name='descuentos[${t}][motivo]' value='${descuentos[t].motivo}'>`),e.find("form").append(`<input type='hidden' name='descuentos[${t}][id]' value='${descuentos[t].id}'>`),e.find("form").append(`<input type='hidden' name='descuentos[${t}][descuento]' value='${descuentos[t].descuento}'>`),e.find("form").append(`<input type='hidden' name='descuentos[${t}][nuevo]' value='${descuentos[t].nuevo}'>`),e.find("form").append(`<input type='hidden' name='descuentos[${t}][tipo]' value='${descuentos[t].tipo}'>`);e.modal("show"),e.find(".se-recibe").val(""),setTimeout((function(){e.find(".se-recibe").trigger("focus")}),500),e.find(".cambio").text("$0.00"),$(document).off("keyup",".se-recibe").on("keyup",".se-recibe",(function(t){13==t.which&&$(".btn-realizar-cobro").trigger("click");var o=$(this).val();e.find(".cambio").text("$"+(o-total).toFixed(2))}))}))):alerta("Debe ingresar al menos 1 producto","danger")})),$(".btn-imprimir-ultima").off("click").on("click",(function(){$.ajax({type:"GET",url:$("#ruta-reimprimir-ultima-venta").val(),success:function(e){imprimirTicketVenta({id:e},(function(){alerta("Se ha impreso el ticket","success")}),(function(){alerta("No se pudo imprimir el ticket, consulte con soporte","danger")}))}})})),$(".btn-imprimir-ultimo-corte").off("click").on("click",(function(){$.ajax({type:"GET",url:$("#ruta-reimprimir-ultimo-corte").val(),success:function(e){imprimirTicketCorte(e)},complete:function(){setTimeout((function(){location.reload()}),2e3)}})})),$(document).off("change","select[name='metodo_pago']").on("change","select[name='metodo_pago']",(function(){"Efectivo"!==$(this).val()?$("#controles-efectivo").addClass("d-none"):$("#controles-efectivo").removeClass("d-none")}))}));
+var productos = [];
+var descuentos = [];
+var descuento = {};
+var total = 0;
+var busquedaTime;
+var cobrando = false;
+
+var recalcularDescuento = function (modalDescuento) {
+    var originalInput = modalDescuento.find("input[name='total']");
+    var prod = JSON.parse(decodeURIComponent(modalDescuento.find("input[name='producto']").val()));
+    var tipo = modalDescuento.find(`select[name='tipo_descuento']`).val();
+    var de = parseFloat(modalDescuento.find("input[name='descuento_valor']:visible").val());
+    var motivo = modalDescuento.find("textarea[name='motivo']").val();
+    de = isNaN(de) ? 0 : de;
+    var n = 0;
+    if (tipo == "monto") {
+        n = parseFloat(prod.venta - de).toFixed(2);
+    } else {
+        n = parseFloat(Math.ceil(prod.venta * (1 - (de / 100)))).toFixed(2);
+    }
+    var esMenor = n < parseFloat(prod.compra);
+    modalDescuento.find(".btn-realizar-descuento").attr("disabled", esMenor);
+    if (esMenor) {
+        alerta("No se puede hacer un descuento tan alto<br>Corrija para continuar", "warning");
+    } else {
+        $(".js-generated").fadeOut();
+    }
+    originalInput.val(n);
+    // Se forma el obj descuento
+    descuento = {
+        "id": prod.id,
+        "motivo": motivo,
+        "descuento": de,
+        "nuevo": n,
+        "tipo": tipo
+    };
+}
+
+var recargarCuenta = function () {
+    $(".cuenta").html("");
+    $("#busqueda").val("").trigger("focus");
+    total = 0;
+    for (var t = productos.length - 1; t >= 0; t--) {
+        var tieneDescuento = descuentos.find(c => c.id == productos[t].id);
+        var desc = "";
+        if (tieneDescuento !== undefined) {
+            if (tieneDescuento.tipo == "monto") {
+                desc = `<span class='descuento'>
+                            -$${tieneDescuento.descuento}
+                        </span>`;
+            } else {
+                desc = `<span class='descuento'>
+                            -${tieneDescuento.descuento}%
+                        </span>`;
+            }
+        }
+        $(".cuenta").append("<div class='row item'>" +
+            `<div class='col-1 text-center'><i class='material-icons producto-eliminar' data-id='${productos[t].id}'>close</i></div>
+            <div class='col-md-5 col-11 text-center text-md-left'>${productos[t].nombre}<br>
+                <sub>${productos[t].descripcion}</sub>
+            </div>
+            <div class='col-md-2 col-4 producto-venta' data-id='${productos[t].id}'>
+                $${productos[t].venta}
+                ${desc}
+            </div>
+            <div class='col-md-2 col-4 producto-cantidad' data-id='${productos[t].id}'>${productos[t].cantidad}</div>
+            <div class='col-md-2 col-4 text-right'>$${(productos[t].venta * productos[t].cantidad).toFixed(2)}</div>
+            </div><hr>`);
+        total += parseFloat(productos[t].venta * productos[t].cantidad);
+    }
+
+    $('.total-cuenta').find('b:nth-child(2)').text("$" + total.toFixed(2));
+
+    $(document).off("dblclick").on("dblclick", ".producto-cantidad", function (e) {
+        e.preventDefault();
+        var cantidad = $(this).text();
+        var id = $(this).attr("data-id");
+        $(this).text("");
+        var input = "<input type='text' class='form-control cantidad-input onlynumbers' value='" + cantidad + "'></input>";
+        $(this).html(input);
+        $(document).off("keypress", ".cantidad-input").on("keypress", ".cantidad-input", function (e) {
+            if (e.which == 13) {
+                var newCantidad = parseInt($(this).val());
+                if (newCantidad == 0)
+                    return;
+                var index = productos.findIndex(c => c.id == id);
+                if (!hasStock(productos[index], newCantidad))
+                    newCantidad = productos[index].cantidad;
+
+                productos[index].cantidad = newCantidad;
+                recargarCuenta();
+                $("#busqueda").focus();
+            }
+        });
+    });
+    $(document).off("dblclick", ".producto-venta").on("dblclick", ".producto-venta", function (e) {
+        e.preventDefault();
+        var id = $(this).attr("data-id");
+        abrirModal($('#ruta-descuento').val() + `/${id}`, "GET", "md", false, "", function (modalDescuento) {
+            var existing = descuentos.findIndex(c => c.id == id);
+            // Habilitar campo de monto o porcentaje
+            modalDescuento.find("select[name='tipo_descuento']").off("change").on("change", function () {
+                var tipo = $(this).val();
+                $(".descuento_tipo").addClass("d-none");
+                $(`.descuento_${tipo}`).removeClass("d-none");
+
+                recalcularDescuento(modalDescuento);
+            });
+            // Si ya existe el descuento previamente
+            if (existing >= 0) {
+                var desc = descuentos[existing];
+                modalDescuento.find(`select[name='tipo_descuento'] option[value='${desc.tipo}']`).attr("selected", true);
+                modalDescuento.find(`select[name='tipo_descuento']`).trigger("change");
+                modalDescuento.find(`input[name='descuento_valor']`).val(desc.descuento);
+                modalDescuento.find(`input[name='total']`).val(desc.nuevo);
+                modalDescuento.find(`textarea[name='motivo']`).val(desc.motivo);
+            }
+            // Cuando se edita el valor del descuento
+            modalDescuento.off("keyup", "input[name='descuento_valor']").on("keyup", "input[name='descuento_valor']", function (e) {
+                recalcularDescuento(modalDescuento);
+            });
+            // Cuando cambia algo en el motivo también se recalcula todo
+            modalDescuento.find("textarea[name='motivo']").off("change").on("change", function (e) {
+                recalcularDescuento(modalDescuento);
+            });
+            // Click Realizar descuento
+            modalDescuento.find(".btn-realizar-descuento").off("click").on("click", function (ev) {
+                ev.preventDefault();
+                ev.stopPropagation();
+                if (Object.keys(descuento).length === 0) {
+                    alerta("Complete el formulario para continuar", "danger");
+                    return;
+                }
+                if (descuento.motivo == "" || descuento.descuento == 0) {
+                    alerta("Complete el formulario para continuar", "danger");
+                    return;
+                }
+                if (existing >= 0) {
+                    if (descuento.descuento == 0)
+                        descuentos.splice(existing, 1);
+                    else
+                        descuentos[existing] = descuento;
+                } else {
+                    descuentos.push(descuento);
+                }
+                modalDescuento.modal("hide");
+                var index = productos.findIndex(c => c.id == id);
+                productos[index].venta = descuento.nuevo;
+                descuento = {};
+                recargarCuenta();
+                $("#busqueda").focus();
+            });
+        });
+    });
+    $(document).off("click", ".producto-eliminar").on("click", ".producto-eliminar", function () {
+        var id = $(this).attr("data-id");
+        var index = productos.findIndex(c => c.id == id);
+        productos.splice(index, 1);
+        recargarCuenta();
+    });
+}
+
+const hasStock = (producto, cantidad = 0) => {
+    const hasStockAvailable = (producto.stock - cantidad) >= 0;
+    if (!hasStockAvailable)
+        alerta("Producto sin stock disponible", "danger");
+    return hasStockAvailable;
+}
+
+$(function () {
+    $("body").on("keydown", function (e) {
+        if (e.which == 121) { // F2
+            e.preventDefault();
+            $(".btn-cobrar").trigger("click");
+            cobrando = true;
+        } else if (e.which == 27) {// ESC
+            $(".js-generated").fadeOut(function () {
+                $(this).remove();
+            });
+        }
+    });
+    $("#busqueda").on("keydown", function (e) {
+        // Si es la flecha arriba
+        if (e.which == 38 || e.which == 13) {
+            e.preventDefault();
+            if ($(this).val() == "")
+                return;
+            buscarProducto($(this).val());
+        }
+    });
+    $("#btnBuscar").on("click", function (e) {
+        e.preventDefault();
+        buscarProducto($("#busqueda").val());
+    });
+    var buscarProducto = function (b) {
+        $.ajax({
+            type: "POST",
+            url: $("#ruta-buscar").val(),
+            data: {
+                "busqueda": b
+            },
+            success: function (res) {
+                if (isMobile) {
+                    var modal = $("#modal-general");
+                    modal.find(".modal-content").html("").html(res);
+                    modal.modal("show");
+                    modal.off("hidden.bs.modal").on("hidden.bs.modal", function () {
+                        $("#busqueda").focus();
+                    });
+                    modal.find(".tabla-productos .producto").on("click", function () {
+                        agregarProducto(this);
+                        modal.modal("hide");
+                        $("#busqueda").val("");
+                    });
+                } else {
+                    $("#resultados tbody").html(res);
+                    if ($("#resultados tbody tr").length == 1) {
+                        agregarProducto($("#resultados tbody tr").first());
+                    }
+                    $("#resultados tbody").find(".producto").on("click", function () {
+                        agregarProducto(this);
+                    });
+                }
+            }
+        });
+    }
+    var agregarProducto = function (element) {
+        var producto = JSON.parse($(element).attr("data-producto"));
+        producto.cantidad = 1;
+        var existe = productos.findIndex(c => c.id == producto.id);
+
+        if (existe != -1) {
+            if (hasStock(producto, productos[existe].cantidad + 1))
+                productos[existe].cantidad += 1;
+            else
+                return;
+        }
+        else {
+            if (hasStock(producto, producto.cantidad))
+                productos.push(producto);
+            else
+                return;
+        }
+        recargarCuenta();
+
+    }
+
+    $(".btn-cobrar").off("click").on("click", function () {
+        // Si no hay productos que cobrar
+        if (productos.length == 0) {
+            alerta("Debe ingresar al menos 1 producto", "danger");
+            return;
+        }
+        if (cobrando) return;
+        cobrando = true;
+        abrirModal("/caja/cobro", "GET", "md", false, "", function (modalCobro) {
+            modalCobro.off("hidden.bs.modal").on("hidden.bs.modal", function () {
+                cobrando = false;
+            });
+            modalCobro.find(".total").text("$" + total.toFixed(2));
+            modalCobro.find("input[name='total']").val(total.toFixed(2));
+            for (var g = 0; g < productos.length; g++) {
+                modalCobro.find("form").append("<input type='hidden' name='productos[" + g + "][cantidad]' value='" + productos[g].cantidad + "'>");
+                modalCobro.find("form").append("<input type='hidden' name='productos[" + g + "][venta]' value='" + productos[g].venta + "'>");
+                modalCobro.find("form").append("<input type='hidden' name='productos[" + g + "][id]' value='" + productos[g].id + "'>");
+            }
+            for (var g = 0; g < descuentos.length; g++) {
+                modalCobro.find("form").append(`<input type='hidden' name='descuentos[${g}][motivo]' value='${descuentos[g].motivo}'>`);
+                modalCobro.find("form").append(`<input type='hidden' name='descuentos[${g}][id]' value='${descuentos[g].id}'>`);
+                modalCobro.find("form").append(`<input type='hidden' name='descuentos[${g}][descuento]' value='${descuentos[g].descuento}'>`);
+                modalCobro.find("form").append(`<input type='hidden' name='descuentos[${g}][nuevo]' value='${descuentos[g].nuevo}'>`);
+                modalCobro.find("form").append(`<input type='hidden' name='descuentos[${g}][tipo]' value='${descuentos[g].tipo}'>`);
+            }
+            modalCobro.modal("show");
+            modalCobro.find(".se-recibe").val("");
+            setTimeout(function () {
+                modalCobro.find(".se-recibe").trigger("focus");
+            }, 500);
+            modalCobro.find(".cambio").text("$0.00");
+            $(document).off("keyup", ".se-recibe").on("keyup", ".se-recibe", function (e) {
+                if (e.which == 13)
+                    $(".btn-realizar-cobro").trigger("click");
+                var de = $(this).val();
+                modalCobro.find(".cambio").text("$" + (de - total).toFixed(2));
+            });
+        });
+    });
+
+    $(".btn-imprimir-ultima").off("click").on("click", function () {
+        $.ajax({
+            type: "GET",
+            url: $('#ruta-reimprimir-ultima-venta').val(),
+            success: function (r) {
+                var id = r;
+                imprimirTicketVenta({ "id": id }, function () {
+                    alerta("Se ha impreso el ticket", "success");
+                }, function () {
+                    alerta("No se pudo imprimir el ticket, consulte con soporte", "danger");
+                });
+            }
+        })
+    });
+
+    $('.btn-imprimir-ultimo-corte').off('click').on('click', function () {
+        // SI ES CIERRE
+        $.ajax({
+            type: "GET",
+            url: $('#ruta-reimprimir-ultimo-corte').val(),
+            success: function (cierre) {
+                imprimirTicketCorte(cierre);
+            },
+            complete: function () {
+                setTimeout(function () {
+                    location.reload();
+                }, 2000);
+            }
+        });
+    });
+
+    $(document).off("change", "select[name='metodo_pago']").on("change", "select[name='metodo_pago']", function () {
+        if ($(this).val() !== "Efectivo") {
+            $("#controles-efectivo").addClass("d-none");
+        } else {
+            $("#controles-efectivo").removeClass("d-none");
+        }
+    });
+});

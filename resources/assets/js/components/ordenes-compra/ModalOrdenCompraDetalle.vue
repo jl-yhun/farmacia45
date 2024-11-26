@@ -110,6 +110,7 @@ const removeItem = async (producto) => {
                         <table class="tabla-items-detalle table">
                             <thead>
                                 <tr>
+                                    <th>#</th>
                                     <th>Código</th>
                                     <th>Nombre</th>
                                     <th>Cantidad</th>
@@ -120,7 +121,8 @@ const removeItem = async (producto) => {
                             </thead>
                             <tbody>
                                 <tr :class="{ 'pointer': editable }" @dblclick="setEditando(producto)"
-                                    v-for="producto in state.orden?.productos" :key="producto.id">
+                                    v-for="(producto, index) in state.orden?.productos" :key="producto.id">
+                                    <td>{{ index + 1}}</td>
                                     <td>{{ producto.codigo_barras }}</td>
                                     <td class="flex flex-column">
                                         <div>
@@ -189,7 +191,7 @@ const removeItem = async (producto) => {
 <style>
 .tabla-items-detalle {
     display: grid;
-    grid-template-columns: 1fr 3fr repeat(4, 1fr);
+    grid-template-columns: .5fr 2fr repeat(5, 1fr);
     max-height: 60vh;
     overflow-y: auto;
 }
